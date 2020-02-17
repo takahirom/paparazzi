@@ -15,21 +15,43 @@
  */
 package app.cash.paparazzi.sample
 
+import LaunchItem
+import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.test.platform.app.InstrumentationRegistry
 import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.DeviceConfig.Companion.NEXUS_5
 import app.cash.paparazzi.DeviceConfig.Companion.NEXUS_5_LAND
 import app.cash.paparazzi.DeviceConfig.Companion.NEXUS_7
+import app.cash.paparazzi.sample.databinding.LaunchBinding
+import com.xwray.groupie.databinding.BindableItem
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.robolectric.android.fakes.RoboMonitoringInstrumentation
 
 class LaunchViewTest {
   @get:Rule
   var paparazzi = Paparazzi(deviceConfig = NEXUS_7)
 
+  @Before
+  fun setup() {
+    val roboMonitoringInstrumentation = RoboMonitoringInstrumentation()
+    InstrumentationRegistry.registerInstance(roboMonitoringInstrumentation, Bundle.EMPTY)
+  }
+
   @Test
   fun nexus7() {
-    val launch = paparazzi.inflate<LinearLayout>(R.layout.launch)
+    LaunchItem("item text!!!!").snapshot()
+  }
+
+  private fun<T: ViewDataBinding> BindableItem<T>.snapshot() {
+    val launch = paparazzi.inflate<View>(layout)
+    val bind = DataBindingUtil.bind<T>(launch) ?: error("")
+    bind(bind, 0)
     paparazzi.snapshot(launch, "launch nexus7")
   }
 
